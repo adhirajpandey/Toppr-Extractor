@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Toppr CSV Generator Application</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Toppr CSV Generator</h1>
+    <form id="csv-form" method="POST">
+        <label for="url">Enter Toppr URL:</label>
+        <input type="text" name="url" required>
+        <span id="acknowledgment-message" style="color: green;"></span>
+        <div id="button-container">
+            <button type="submit" id="generate-button">Generate CSV</button>
+            <!-- New button for downloading CSV -->
+            <a href="#" id="csv-download-link" download="output.csv" style="display: none;" id="download-button">Download CSV</a>
+        </div>
+    </form>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h2>Notes:</h2>
+    <p>!!!  10 Questions are extracted in around 1 sec. Please wait accordingly in the browser window.  !!!</p>
+    <p>A "Download CSV" button will popup once the processing is completed.</p>
+    <br>
+    <p>Sample Link: https://www.toppr.com/ask/question-set/sectors-of-the-indian-economy-562247/medium/</p>
+    
+
+    <script>
+        
+        document.getElementById('csv-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            var url = event.target.url.value;
+
+            // Display acknowledgment message
+            var acknowledgmentMessage = document.getElementById('acknowledgment-message');
+            acknowledgmentMessage.textContent = 'Processing your request...';
+
+            // Disable the "Generate CSV" button
+            document.getElementById('generate-button').disabled = true;
+
+            // Show and disable the "Download CSV" link
+            var downloadLink = document.getElementById('csv-download-link');
+            downloadLink.style.display = 'none'; // Hide the link initially
+            downloadLink.style.pointerEvents = 'none'; // Disable click event
+            downloadLink.style.opacity = '0.5'; // Dim the link
+
+            // Send a POST request to start the task
+            fetch('/', {
+                method: 'POST',
+                body: JSON.stringify({url: url}),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            }).then(response => response.text()).then(function(taskId) {
+                // Poll the task status every few seconds
+                var checkInterval = setInterval(function() {
+                    fetch('/task/' + taskId).then(response => response.json()).then(function(data) {
+                        if (data.status === 'SUCCESS') {
+                            // Task is completed, enable the "Download CSV" link
+                            downloadLink.style.display = 'inline-block'; // Show the link and make it inline-block
+                            acknowledgmentMessage.textContent = ''; // Clear the acknowledgment message
+                            downloadLink.style.pointerEvents = 'auto'; // Enable click event
+                            downloadLink.style.opacity = '1.0'; // Reset opacity
+                            downloadLink.href = '/download/' + taskId; // Set the download link
+                            // Re-enable the "Generate CSV" button
+                            document.getElementById('generate-button').disabled = false;
+                            clearInterval(checkInterval);
+                        } else if (data.status === 'FAILURE') {
+                            // Task failed
+                            alert('CSV generation failed. Please try again.');
+                            document.getElementById('generate-button').disabled = false; // Enable the "Generate CSV" button
+                            clearInterval(checkInterval);
+                        }
+                    });
+                }, 5000);  // Check every 5 seconds (adjust as needed)
+            });
+        });
+    </script>
+</body>
+</html>
