@@ -12,9 +12,9 @@ This Python tool allows you to efficiently convert links of Toppr questions into
 
 4. If you are using playwright for first time, you would also need to install its browser dependencies: `playwright install`
 
-5. Run Flask App and Celery Worker using `bash start.sh`
+5. Create empty DATA directory, Run Flask App and Celery Worker using `bash start.sh`
 
-6. Open your web browser and navigate to `http://localhost:4321`.
+6. Open your web browser and navigate to `http://localhost:4322`.
 
 7. Paste the Toppr question link in the provided input field.
 

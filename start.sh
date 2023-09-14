@@ -2,6 +2,8 @@
 
 source venv/bin/activate
 
+mkdir DATA
+
 # Check if the Flask server process is running
 if ps aux | grep -v grep | grep "python3 app.py" >/dev/null; then
     # Flask server process is running, capture its PID
