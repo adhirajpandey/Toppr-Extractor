@@ -55,7 +55,6 @@ button, a {
     border-radius: 5px;
     cursor: pointer;
     text-decoration: none; /* Remove underline for "Download CSV" link */
-    display: inline-block; /* Display as inline block */
     font-size: 16px; /* Set font size for button and link text */
 }
 
@@ -64,6 +63,11 @@ button:hover, a:hover {
 }
 
 h2 {
+    text-align: center;
+    padding: 10px 0;
+}
+
+p {
     text-align: center;
     padding: 10px 0;
 }
@@ -85,20 +89,14 @@ a#csv-download-link:hover {
     margin-top: 10px;
 }
 
-/* Style for the "Generate CSV" button within the container */
+/* Style for the "Convert to CSV" button within the container */
 #generate-button {
     margin-right: 10px; /* Add some spacing between buttons */
+    display: inline-block; /* Display as inline block */
 }
 
-/* Style for the "Download CSV" link within the container */
-#csv-download-link {
+/* Style for the "Download CSV" button within the container */
+#downloadButton {
     margin-left: 10px; /* Add some spacing between buttons */
-}
-
-/* Style for the "Notes" section */
-p {
-    font-size: 16px; /* Set font size for the notes text */
-    text-align: center;
-    padding: 10px 0;
-    line-height: 0.2; /* Adjust line height for better readability */
+    display: inline-block; /* Display as inline block */
 }
