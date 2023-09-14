@@ -20,19 +20,3 @@ def url_to_csv(input_url):
 
     print("Successfully created csv file out.csv")
 
-
-# input_url = 'https://www.toppr.com/ask/question-set/hydrocarbons-432904/medium/'
-
-# api_call_url, total_pages = get_total_pages(input_url)
-
-# # print("Total Pages :", total_pages)
-
-# total_pages = 10
-# #storing all page responses in DATA folder
-# fetch_data(api_call_url, total_pages)
-
-# merge_json_files('DATA/', 'Final/merged_data.json')
-
-# create_csv('Final/merged_data.json', 'Final/out.csv')
-
-# print("Successfully created csv file Final/out.csv")

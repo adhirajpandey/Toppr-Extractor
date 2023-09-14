@@ -18,16 +18,14 @@ def run(playwright: Playwright, input_url) -> int:
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()
     stealth_sync(context)
-    
+
+    print(input_url)
     page = context.new_page()
 
-    final_url = convert_to_api_url(input_url + '1')
+    final_url = convert_to_api_url(input_url)
 
-    # print(final_url)
-
+    print(final_url)
     page.goto(final_url)
-
-    time.sleep(0.5)
 
     #capture html response
     html_response = page.content()
@@ -54,8 +52,6 @@ def run(playwright: Playwright, input_url) -> int:
     return api_call_url,total_pages
 
 
-
-
 #need to get variable of total pages in first request
 def get_total_pages(input_url):
     with sync_playwright() as playwright:
@@ -63,4 +59,4 @@ def get_total_pages(input_url):
     return total_pages
 
 # if __name__ == '__main__':
-#     print("Total Pages :",get_total_pages('https://www.toppr.com/ask/question-set/hydrocarbons-432904/medium/'))
+    # print("Total Pages :",get_total_pages('https://www.toppr.com/ask/question-set/sectors-of-the-indian-economy-562247/medium'))
