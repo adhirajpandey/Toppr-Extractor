@@ -20,7 +20,11 @@ This Python tool allows you to efficiently convert links of Toppr questions into
 
 8. Click the "Generate CSV" button, and the tool will gather information from the provided links and generate a CSV file.
 
-9. "Download CSV" button will appear once celery worker has completed the task, click it to download the CSV file. 
+9. "Download CSV" button will appear once celery worker has completed the task, click it to download the CSV file.
+
+## Working
+![Arch](https://github.com/adhirajpandey/Toppr-Extractor/assets/87516052/ad17513f-823e-408c-b967-b929d8fa6e88)
+
 
 ## Limitations
 1. This tool relies on web automation and HTML parsing, which might break if the structure of Toppr's website changes significantly.
