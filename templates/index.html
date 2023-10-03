@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Toppr CSV Generator Application</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <title>Toppr Extractor</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
 </head>
 <body>
-    <h1>Toppr CSV Generator</h1>
-    <form id="csv-form" method="POST">
-        <label for="url">Enter Toppr URL:</label>
-        <input type="text" name="url" required>
-        <span id="acknowledgment-message" style="color: green;"></span>
-        <div id="button-container">
-            <button type="submit" id="generate-button">Generate CSV</button>
-            <!-- New button for downloading CSV -->
-            <a href="#" id="csv-download-link" download="output.csv" style="display: none;" id="download-button">Download CSV</a>
+    <!-- <script src="/static/js/script.js"></script> -->
+    <h1>Toppr Extractor</h1>
+    <form id="urlForm" method="POST" action="/">
+        <label for="url">Enter Toppr URL :</label>
+        <input type="text" id="url" name="url" required>
+        <div id="button-container"> <!-- Add a container for the buttons -->
+            <button type="submit" id="generate-button">Convert to CSV</button>
+            <!-- Hidden download link -->
+            <a id="csv-download-link" style="display: none;" href=""></a>
+            <button id="downloadButton" style="display: none;" onclick="downloadCSV()">Download CSV</button>
         </div>
+        <!-- Message element for processing message -->
+        <div id="processing-message" style="display: none;">Processing your request...</div>
     </form>
     <br>
     <br>
@@ -28,58 +31,84 @@
     <p>A "Download CSV" button will popup once the processing is completed.</p>
     <br>
     <p>Sample Link: https://www.toppr.com/ask/question-set/sectors-of-the-indian-economy-562247/medium/</p>
-    
 
     <script>
+        let pollingInterval;
+        let taskId;
         
-        document.getElementById('csv-form').addEventListener('submit', function(event) {
+        document.getElementById("urlForm").addEventListener("submit", function(event) {
             event.preventDefault();
-            var url = event.target.url.value;
-
-            // Display acknowledgment message
-            var acknowledgmentMessage = document.getElementById('acknowledgment-message');
-            acknowledgmentMessage.textContent = 'Processing your request...';
-
-            // Disable the "Generate CSV" button
-            document.getElementById('generate-button').disabled = true;
-
-            // Show and disable the "Download CSV" link
-            var downloadLink = document.getElementById('csv-download-link');
-            downloadLink.style.display = 'none'; // Hide the link initially
-            downloadLink.style.pointerEvents = 'none'; // Disable click event
-            downloadLink.style.opacity = '0.5'; // Dim the link
-
-            // Send a POST request to start the task
+            const url = document.getElementById("url").value;
+            
+            // Display processing message
+            document.getElementById("processing-message").style.display = "block";
+            
             fetch('/', {
                 method: 'POST',
-                body: JSON.stringify({url: url}),
+                body: new URLSearchParams({ 'url': url }),
                 headers: {
-                    'Content-Type': 'application/json',
-                },
-            }).then(response => response.text()).then(function(taskId) {
-                // Poll the task status every few seconds
-                var checkInterval = setInterval(function() {
-                    fetch('/task/' + taskId).then(response => response.json()).then(function(data) {
-                        if (data.status === 'SUCCESS') {
-                            // Task is completed, enable the "Download CSV" link
-                            downloadLink.style.display = 'inline-block'; // Show the link and make it inline-block
-                            acknowledgmentMessage.textContent = ''; // Clear the acknowledgment message
-                            downloadLink.style.pointerEvents = 'auto'; // Enable click event
-                            downloadLink.style.opacity = '1.0'; // Reset opacity
-                            downloadLink.href = '/download/' + taskId; // Set the download link
-                            // Re-enable the "Generate CSV" button
-                            document.getElementById('generate-button').disabled = false;
-                            clearInterval(checkInterval);
-                        } else if (data.status === 'FAILURE') {
-                            // Task failed
-                            alert('CSV generation failed. Please try again.');
-                            document.getElementById('generate-button').disabled = false; // Enable the "Generate CSV" button
-                            clearInterval(checkInterval);
-                        }
-                    });
-                }, 5000);  // Check every 5 seconds (adjust as needed)
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => {
+                if (response.status === 200) {
+                    return response.text();
+                } else {
+                    alert('Invalid URL, please try again.');
+                    document.getElementById("url").value = "";
+                    document.getElementById("processing-message").style.display = "none";
+                    throw new Error('Non-200 response code');
+                }
+            })
+            .then(data => {
+                // Start polling for task status
+                taskId = data;
+                pollTaskStatus();
+                
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
         });
+
+        function pollTaskStatus() {
+            pollingInterval = setInterval(() => {
+                fetch(`/task/${taskId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'SUCCESS') {
+                        // Stop polling and display the "Download CSV" button
+                        clearInterval(pollingInterval);
+                        document.getElementById("downloadButton").style.display = "inline-block";
+                        // Hide processing message
+                        document.getElementById("processing-message").style.display = "none";
+                    } else if (data.status === 'FAILURE') {
+                        alert('Conversion failed. Please check the URL and try again.');
+                        clearInterval(pollingInterval);
+                        // Hide processing message
+                        document.getElementById("processing-message").style.display = "none";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }, 3000); // Poll every 3 seconds
+        }
+
+        function downloadCSV() {
+            // Clear the input field after form submission
+            document.getElementById("url").value = "";
+            
+            // Set the href attribute of the hidden download link
+            const downloadLink = document.getElementById("csv-download-link");
+            downloadLink.href = `/download/${taskId}`;
+
+            // Simulate a click event on the hidden download link
+            downloadLink.click();
+
+            // Prevent further polling after "Download CSV" button is clicked
+            clearInterval(pollingInterval);
+        }
     </script>
 </body>
 </html>
