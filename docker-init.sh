@@ -2,6 +2,8 @@
 
 cd /app
 
+mkdir DATA
+
 # Update and install basic dependencies
 apt-get update && apt-get install -y \
     bash \
