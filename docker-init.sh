@@ -41,6 +41,7 @@ apt-get update && apt-get install -y \
 
 # Install Python packages
 pip3 install -r requirements.txt
+playwright install
 
 echo "Requirements Installed"
 
