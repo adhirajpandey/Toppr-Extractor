@@ -57,4 +57,4 @@ def download_csv(task_id):
         return "CSV generation is still in progress. Please check again later.", 400
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=4322)

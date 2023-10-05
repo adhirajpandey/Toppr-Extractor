@@ -22,6 +22,16 @@ This Python tool allows you to efficiently convert links of Toppr questions into
 
 9. "Download CSV" button will appear once celery worker has completed the task, click it to download the CSV file.
 
+### Setup using Docker
+
+1. Clone the project to your local system using: `git clone https://github.com/adhirajpandey/Toppr-Extractor`
+
+2. Build Docker image using `docker build -t toppr .`
+
+3. Run Docker continaer `docker run -d -p 4322:5000 toppr`
+
+4. Follow through from Step 6 to Step 9
+
 ## Working
 ![Arch](https://github.com/adhirajpandey/Toppr-Extractor/assets/87516052/ad17513f-823e-408c-b967-b929d8fa6e88)
 
